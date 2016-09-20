@@ -7,7 +7,22 @@ var hue = new HueApi();
 var sleep = require('sleep');
 // set this to your valid bridge username
 var username = "fM3x8le6rXeRuCnIk2qpjAt258pYRuIVxIWVzSyd"; 
+var http = require("http");
 
+
+var api = null;
+
+// ****
+// the logic should be
+// - locate the bridge
+// - see if the username is valid
+// --- if it isn't try to create a new user & exit the program after
+// --- if it IS valid
+// ------ locate the lights
+// ------ run a loop every 5 seconds that:
+// -------- for each light
+// ---------- set it to a random color
+// ****
 
 var displayError = function(err) {
     console.log(err);
@@ -23,7 +38,7 @@ var foundBridges = function(bridges) {
     // try to log in as the user
     try {
     	// try logging in
-    	var api = new HueApi(bridgeip, username);
+    	api = new HueApi(bridgeip, username);
 
     	// check if login is valid
     	api.config().then(function(result) {
@@ -41,7 +56,7 @@ var foundBridges = function(bridges) {
 
 			    	// DO SOMETHING WITH THE LIGHTS WE FOUND
 			    	// TODO: move this out into a separate function or something
-			    	
+
 					console.log("Lights found: " + result.lights.length);
 
 					console.log("Setting random colors & slow transition another random color");
@@ -132,3 +147,53 @@ var foundBridges = function(bridges) {
 
 // Look for the bridge
 hueInc.nupnpSearch().then(foundBridges).done();
+
+
+// very simple router for the API below
+var params=function(req){
+  var q=req.url.split('?');
+  var  result={};
+  if(q.length>=2){
+      q[1].split('&').forEach((item)=>{
+           try {
+             result[item.split('=')[0]]=item.split('=')[1];
+           } catch (e) {
+             result[item.split('=')[0]]='';
+           }
+      })
+  }
+  return result;
+}
+
+
+// API endpoint to change the colors...
+// e.g. you can make a call to http://localhost:8088/?r=0&g=200&b=40 to change the light colors
+http.createServer(function (request, response) {
+   response.writeHead(200, {"Content-Type": "text/html"}); 
+
+   request.params = params(request);
+   request.path = request.url.match('^[^?]*')[0];
+
+   var r = request.params.r;
+   var g = request.params.g;
+   var b = request.params.b;
+   
+	api.lights()
+	.then(function(result) {
+		var desc = "Lights found: " + result.lights.length ;   
+
+		if (r && b && g) {
+
+			desc += "<hr />Color set to " + r + " " + g + " " + b;
+		    result.lights.forEach(function(light) {
+		    	var lightid = light.id;
+
+		    	var ls = lightState.create().on().rgb(r,g,b).brightness(250);
+		    	api.setLightState(lightid, ls);
+		    });			
+		}		
+
+		response.end(desc);
+	});
+
+}).listen(8088);
