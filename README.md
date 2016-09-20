@@ -2,28 +2,13 @@
 
 This is a node project, so run npminstall first, then node index.js
 
-### What is this repository for? ###
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+When you run it, it will try to log into the Hue bridge. If the auth fails, 
+you'll have to press the button and copy down the username, and update the code.
 
-### How do I get set up? ###
+Once it's running, it will cycle the colors of the lights, and then expose an API endpoint at 
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+http://localhost:8088/?r=0&g=200&b=40 
 
-### Contribution guidelines ###
+where you can change the colors of the lights. So other systems can change the colors of all lights.
 
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
