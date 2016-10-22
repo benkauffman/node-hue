@@ -8,11 +8,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 # Install app dependencies
-RUN npm install
+RUN npm install node-hue-api sleep
 
-EXPOSE 8080
-# CMD [ "npm", "start" ]
-CMD [ "/bin/bash"]
-
-# docker build -t phillips-hue-api --no-cache .
-# docker run -it -P --rm --name phillips-hue-api phillips-hue-api
+EXPOSE 8088
+CMD [ "npm", "start" ]

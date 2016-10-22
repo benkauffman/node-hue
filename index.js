@@ -6,7 +6,7 @@ var bridgeip = "";
 var hue = new HueApi();
 var sleep = require('sleep');
 // set this to your valid bridge username
-var username = "fM3x8le6rXeRuCnIk2qpjAt258pYRuIVxIWVzSyd"; 
+var username = "fM3x8le6rXeRuCnIk2qpjAt258pYRuIVxIWVzSyd";
 var http = require("http");
 
 
@@ -94,31 +94,32 @@ var foundBridges = function(bridges) {
 
 							console.log("Bonus Round " + (x+1));
 
+              var r = Math.floor(Math.random() * 256);
+              var g = Math.floor(Math.random() * 256);
+              var b = Math.floor(Math.random() * 256);
+              var brightness = ((x % 2) == 0) ? 100 : 250;
+
 						    result.lights.forEach(function(light) {
 						    	//console.log(light);
 						    	var lightid = light.id;
 
 						    	// set random color & brightness
 						    	// have the new color take effect in 50ms (fast)
-						    	var r = Math.floor(Math.random() * 256);
-						    	var g = Math.floor(Math.random() * 256);
-						    	var b = Math.floor(Math.random() * 256);
-						    	var brightness = ((x % 2) == 0) ? 100 : 250;
-						    	var randomState = lightState.create().on().transition(50).rgb(r,g,b).brightness(brightness);
+
+						    	var randomState = lightState.create().on().transition(10).rgb(r,g,b).brightness(brightness);
 						    	api.setLightState(lightid, randomState);
 						    });
 
 						   if (++x === 20) {
 						       clearInterval(intervalID);
 						   }
-						}, 1000);
+						}, 100);
 
 					}, 5000);
 					// now we're done
 
 				});
-    		}
-    		else {
+    		} else {
     			// user is invalid
     			console.log("INVALID USER");
 
@@ -133,14 +134,14 @@ var foundBridges = function(bridges) {
 				    console.log("Created user: " + JSON.stringify(result));
 				    console.log("Keep a record of this username to log in with!");
 				})
-			    .fail(displayError);   
+			    .fail(displayError);
     		}
     	}).done();
     }
     catch (err) {
     	console.log(err);
 
- 	
+
     }
 };
 
@@ -169,7 +170,7 @@ var params=function(req){
 // API endpoint to change the colors...
 // e.g. you can make a call to http://localhost:8088/?r=0&g=200&b=40 to change the light colors
 http.createServer(function (request, response) {
-   response.writeHead(200, {"Content-Type": "text/html"}); 
+   response.writeHead(200, {"Content-Type": "text/html"});
 
    request.params = params(request);
    request.path = request.url.match('^[^?]*')[0];
@@ -177,10 +178,10 @@ http.createServer(function (request, response) {
    var r = request.params.r;
    var g = request.params.g;
    var b = request.params.b;
-   
+
 	api.lights()
 	.then(function(result) {
-		var desc = "Lights found: " + result.lights.length ;   
+		var desc = "Lights found: " + result.lights.length ;
 
 		if (r && b && g) {
 
@@ -190,8 +191,8 @@ http.createServer(function (request, response) {
 
 		    	var ls = lightState.create().on().rgb(r,g,b).brightness(250);
 		    	api.setLightState(lightid, ls);
-		    });			
-		}		
+		    });
+		}
 
 		response.end(desc);
 	});
