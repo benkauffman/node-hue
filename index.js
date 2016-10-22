@@ -110,7 +110,7 @@ var foundBridges = function(bridges) {
 						    	api.setLightState(lightid, randomState);
 						    });
 
-						   if (++x === 20) {
+						   if (++x === 3) {
 						       clearInterval(intervalID);
 						   }
 						}, 100);
@@ -178,18 +178,27 @@ http.createServer(function (request, response) {
    var r = request.params.r;
    var g = request.params.g;
    var b = request.params.b;
+   var i = request.params.i;
+
 
 	api.lights()
 	.then(function(result) {
 		var desc = "Lights found: " + result.lights.length ;
 
-		if (r && b && g) {
-
-			desc += "<hr />Color set to " + r + " " + g + " " + b;
+		if (r && b && g && i) {
+      console.log(r,g,b,i);
+			desc += "<hr />Color set RGB(" + r + "," + g + "," + b + ") brightness = " + i;
 		    result.lights.forEach(function(light) {
 		    	var lightid = light.id;
 
-		    	var ls = lightState.create().on().rgb(r,g,b).brightness(250);
+
+		    	var ls = lightState.create().on().rgb(r,g,b).brightness(i);
+          if(i <= 0){
+            ls = lightState.create().on(false);
+            console.log("turn lights off");
+          }else{
+            console.log("lights set to ", r, g, b, i);
+          }
 		    	api.setLightState(lightid, ls);
 		    });
 		}

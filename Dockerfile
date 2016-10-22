@@ -11,4 +11,4 @@ COPY . /usr/src/app
 RUN npm install node-hue-api sleep
 
 EXPOSE 8088
-CMD [ "npm", "start" ]
+ENTRYPOINT [ "npm", "start" ]
