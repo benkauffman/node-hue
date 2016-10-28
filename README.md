@@ -1,7 +1,7 @@
 # README #
 
 run `npm install` to install dependencies  
-then `npm run` to start the application  
+then `npm start` to start the application  
 
 
 When you run it, it will try to log into the Hue bridge. If the auth fails, 
